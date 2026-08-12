@@ -47,11 +47,13 @@ get_outagamie <- function(url) {
         block_end <- length(lines)
       }
 
-      # Candidate data lines: lines after "Vote For" that end with a digit
+      # Candidate data lines: lines after "Vote For" that contain a number followed by potential percentage
       data_lines <- lines[(vf_idx + 1):block_end] |>
-    str_trim()
+        str_trim()
 
-      data_lines <- data_lines[str_detect(data_lines, "\\d+$")]
+      # We look for lines that have a number (the vote count) followed by something else (like %) or end with a number
+      # The pattern looks for a sequence of digits that is preceded by spaces and followed by either the end of string or a '%'
+      data_lines <- data_lines[str_detect(data_lines, "\\d+\\s*(%|$)")]
 
       # Skip summary lines and footer
       skip_re <- "Total Votes Cast|Overvotes|Undervotes|Contest Totals|Precinct Report"
@@ -67,8 +69,8 @@ get_outagamie <- function(url) {
     }) |> list_rbind()
   }) |> list_rbind() |>
     mutate(
-      votes = as.integer(str_extract(candidate_line, "\\d+$")),
-      candidate_raw = str_trim(str_remove(candidate_line, "\\s+\\d+$")),
+      votes = as.integer(str_extract(candidate_line, "\\d+(?=\\s+[\\d.]+%|\\s*$)")),
+      candidate_raw = str_trim(str_remove(candidate_line, "\\s+\\d+(\\s+[\\d.]+%)?$")),
       # Write-In Totals → write-in:
       candidate = if_else(
         str_detect(candidate_raw, "Write-In"),

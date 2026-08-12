@@ -12,7 +12,7 @@ read_county <- function(county){
     st_as_sf()
 }
 
-county.list <- c("milwaukee","dane","waukesha","brown","racine","outagamie")
+county.list <- c("milwaukee","dane","waukesha","racine","brown","outagamie", "washington", "ozaukee")
 
 all.counties <- map(.x = county.list, .f = read_county) |>
   list_rbind() |>
@@ -86,6 +86,14 @@ ad19 |> st_drop_geometry() |> group_by(candidate) |> summarise(votes = sum(votes
 ad8 |> st_drop_geometry() |> group_by(candidate) |> summarise(votes = sum(votes)) |> mutate(pct = votes/sum(votes)*100)
 ad76 |> st_drop_geometry() |> group_by(candidate) |> summarise(votes = sum(votes)) |> mutate(pct = votes/sum(votes)*100)
 cd4 |> st_drop_geometry() |> group_by(candidate) |> summarise(votes = sum(votes)) |> mutate(pct = votes/sum(votes)*100)
+
+saveRDS(gov, "processed/aug2026/gov.rds")
+saveRDS(ad21, "processed/aug2026/ad21.rds")
+saveRDS(ad61, "processed/aug2026/ad61.rds")
+saveRDS(ad19, "processed/aug2026/ad19.rds")
+saveRDS(ad8, "processed/aug2026/ad8.rds")
+saveRDS(ad76, "processed/aug2026/ad76.rds")
+saveRDS(cd4, "processed/aug2026/cd4.rds")
 
 ################################################################################
 
@@ -199,6 +207,7 @@ create_pmtiles(ad21, "ad21")
 create_pmtiles(ad61, "ad61")
 create_pmtiles(ad76, "ad76")
 create_pmtiles(ad8, "ad8")
+create_pmtiles(ad19, "ad19")
 
 ################################################################################
 # run the following in terminal to update the pmtiles
@@ -298,6 +307,7 @@ pm.ad13 <- pmtiles_map("https://jdjohn215.github.io/pmtiles/tiles/aug2026/ad13/v
 pm.ad21 <- pmtiles_map("https://jdjohn215.github.io/pmtiles/tiles/aug2026/ad21/votes.pmtiles", ad21)
 pm.ad61 <- pmtiles_map("https://jdjohn215.github.io/pmtiles/tiles/aug2026/ad61/votes.pmtiles", ad61)
 pm.ad76 <- pmtiles_map("https://jdjohn215.github.io/pmtiles/tiles/aug2026/ad76/votes.pmtiles", ad76)
+pm.ad19 <- pmtiles_map("https://jdjohn215.github.io/pmtiles/tiles/aug2026/ad19/votes.pmtiles", ad19)
 
 htmlwidgets::saveWidget(pm.gov, "pm-maps/aug2026/gov.html", selfcontained = TRUE)
 htmlwidgets::saveWidget(pm.cd4, "pm-maps/aug2026/cd4.html", selfcontained = TRUE)
@@ -306,3 +316,4 @@ htmlwidgets::saveWidget(pm.ad21, "pm-maps/aug2026/ad21.html", selfcontained = TR
 htmlwidgets::saveWidget(pm.ad61, "pm-maps/aug2026/ad61.html", selfcontained = TRUE)
 htmlwidgets::saveWidget(pm.ad76, "pm-maps/aug2026/ad76.html", selfcontained = TRUE)
 htmlwidgets::saveWidget(pm.ad13, "pm-maps/aug2026/ad13.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(pm.ad19, "pm-maps/aug2026/ad19.html", selfcontained = TRUE)

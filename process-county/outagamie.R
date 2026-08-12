@@ -6,11 +6,7 @@ library(mapgl)
 source("helper-functions/county_last.R")
 source("county-scrapers/outagamie.R")
 
-raw.results <- get_outagamie("https://www.outagamie.gov/files/assets/county/v/1/county-clerk/documents/elections/2026/08112026-partisan-primary-election/outagamie-county-zero-precinct-report-81126.pdf") |>
-  # ADD DUMMY DATA
-  rowwise() |>
-  mutate(votes = rgeom(1, 1/25) + 1) |>
-  ungroup()
+raw.results <- get_outagamie(county_last("raw/aug2026", "outagamie"))
 saveRDS(raw.results, "processed/aug2026/outagamie.rds")
 unique(raw.results$office)
 

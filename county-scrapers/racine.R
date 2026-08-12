@@ -130,18 +130,23 @@ parse_racine_page <- function(pg, race_name) {
     ) |>
     arrange(x_min)
 
-  # Find data x-position for each column (nearest numeric data below prec_y)
+  # Find data x-positions for each column (numeric data below prec_y, within
+  # the header's x-range).  Numbers in the PDF are right-justified, so the x
+  # position shifts by ~4px per digit — a 3-digit value sits at x, a 2-digit
+  # at x+4, a 1-digit at x+8.  Collecting *all* x positions (not just the most
+  # common one) ensures we don't miss shorter numbers.
   col_info <- col_info |>
     mutate(
-      data_x = map_dbl(x_min, function(hx) {
+      data_xs = map(x_min, function(hx) {
         nearby <- pg |>
           filter(y > prec_y, str_detect(text, "^\\d+$"), x >= hx - 5, x <= hx + 35) |>
-          count(x, sort = TRUE)
-        if (nrow(nearby) == 0) return(NA_real_)
-        nearby$x[1]
+          pull(x) |>
+          unique() |>
+          sort()
+        nearby
       })
     ) |>
-    filter(!is.na(data_x))
+    filter(lengths(data_xs) > 0)
 
   # Classify columns
   col_info <- col_info |>
@@ -182,10 +187,10 @@ parse_racine_page <- function(pg, race_name) {
     # Extract data for each kept column
     map(seq_len(nrow(col_info)), function(ci) {
       col <- col_info[ci, ]
-      # Data at (data_x, y in [py-2, py+10])
+      # Data at (data_xs, y in [py-2, py+10])
       vals <- pg |>
         filter(
-          x == col$data_x,
+          x %in% unlist(col$data_xs),
           y >= py - 2, y <= py + 10,
           str_detect(text, "^\\d+$")
         )

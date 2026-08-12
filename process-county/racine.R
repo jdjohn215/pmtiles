@@ -6,11 +6,7 @@ library(mapgl)
 source("helper-functions/county_last.R")
 source("county-scrapers/racine.R")
 
-raw.results <- get_racine(county_last("raw/aug2026", "racine")) |>
-  # ADD DUMMY DATA
-  rowwise() |>
-  mutate(votes = rgeom(1, 1/25) + 1) |>
-  ungroup()
+raw.results <- get_racine(county_last("raw/aug2026", "racine"))
 saveRDS(raw.results, "processed/aug2026/racine.rds")
 
 unique(raw.results$office)

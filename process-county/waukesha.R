@@ -7,10 +7,6 @@ source("helper-functions/county_last.R")
 source("county-scrapers/waukesha.R")
 
 raw.results <- get_waukesha("https://electionresults.waukeshacounty.gov/contests.aspx?contest=-1") |>
-  # ADD DUMMY DATA
-  rowwise() |>
-  mutate(votes = rgeom(1, 1/25) + 1) |>
-  ungroup() |>
   mutate(ward = if_else(ward == "V Waunakee 6-16", "V Waunakee Wds 6-16", ward),
          ward = if_else(ward == "V DeForest Wds 1-5, 10-11, 18-", "V DeForest Wds 1-5, 10-11, 18-19", ward))
 saveRDS(raw.results, "processed/aug2026/waukesha.rds")

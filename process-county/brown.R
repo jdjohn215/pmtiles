@@ -6,11 +6,7 @@ library(mapgl)
 source("helper-functions/county_last.R")
 source("county-scrapers/brown.R")
 
-raw.results <- get_brown("https://www.browncountywi.gov/i/f/files/County-Clerk/Elections/Election%20Results/2026/August/Canvass.pdf") |>
-  # ADD DUMMY DATA
-  rowwise() |>
-  mutate(votes = rgeom(1, 1/25) + 1) |>
-  ungroup()
+raw.results <- get_brown("https://www.browncountywi.gov/i/f/files/County-Clerk/Elections/Election%20Results/2026/August/summary%20final.pdf")
 saveRDS(raw.results, "processed/aug2026/brown.rds")
 
 unique(raw.results$office)

@@ -6,11 +6,7 @@ library(mapgl)
 source("helper-functions/county_last.R")
 source("county-scrapers/milwaukee.R")
 
-raw.results <- get_milwaukee(county_last("raw/aug2026", "milwaukee")) |>
-  # ADD DUMMY DATA
-  rowwise() |>
-  mutate(votes = rgeom(1, 1/25) + 1) |>
-  ungroup()
+raw.results <- get_milwaukee("raw/aug2026/milwaukee 2026-08-12 01-39-48.html")
 saveRDS(raw.results, "processed/aug2026/milwaukee.rds")
 
 unique(raw.results$office)
